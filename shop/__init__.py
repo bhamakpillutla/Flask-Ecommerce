@@ -11,3 +11,4 @@ bcrypt = Bcrypt(app)
  
  # registering the route
 from shop.admin import routes
+from shop.products import routes
