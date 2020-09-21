@@ -1,6 +1,6 @@
 from flask import redirect, render_template, url_for, flash, request
-from shop import db,app
-from .models import Brand,Category
+from shop import db, app, photos
+from .models import Brand,Category,Addproduct
 from .forms import Addproducts
 
 import secrets
@@ -36,6 +36,12 @@ def addcat():
 
 @app.route('/addproduct', methods=['POST', 'GET'])
 def addproduct():
+    brands = Brand.query.all()
+    categories = Category.query.all()
     form = Addproducts(request.form)
-    return render_template('products/addproduct.html', title = 'Add Product page', form=form)
+    if request.method == 'POST':
+        photos.save(request.files.get('image_1'), name=secrets.token_hex(10)+".")
+        photos.save(request.files.get('image_2'),name=secrets.token_hex(10)+".")
+        photos.save(request.files.get('image_3'),name=secrets.token_hex(10)+".")
+    return render_template('products/addproduct.html', title = 'Add Product page', form=form, brands = brands, categories= categories)
 
