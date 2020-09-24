@@ -7,8 +7,37 @@ import secrets,os
 
 @app.route('/')
 def home():
-    return ""
+    page = request.args.get('page', 1, type=int)
+    products = Addproduct.query.filter(Addproduct.stock > 0).order_by(Addproduct.id.desc()).paginate(page=page, per_page=8)
+    ## picks only available/existing product brands and categories
+    brands = Brand.query.join(Addproduct, ( Brand.id== Addproduct.brand_id)).all()
+    categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()
+    return render_template('products/index.html', products=products, brands= brands, categories=categories)
 
+
+@app.route('/brand/<int:id>')
+def get_brand(id):
+    ## pagination
+    page = request.args.get('page', 1, type=int)
+    ## for pagination id
+    getbrand = Brand.query.filter_by(id=id).first_or_404()
+    brand = Addproduct.query.filter_by(brand=getbrand).paginate(page=page, per_page=6)
+    brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+    ## to display categories in brands dropdown menu
+    categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()
+    return render_template('products/index.html', brand= brand,brands=brands, categories=categories, getbrand=getbrand)
+
+@app.route('/categories/<int:id>')
+def get_category(id):
+    ## pagination
+    page = request.args.get('page', 1, type=int)
+    ## for pagination id
+    getcat = Category.query.filter_by(id=id).first_or_404()
+    get_cat = Addproduct.query.filter_by(category= getcat).paginate(page=page, per_page=6)
+    ##  to display brands in categories dropdown menu
+    brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+    categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()
+    return render_template('products/index.html', get_cat= get_cat ,brands=brands, categories=categories, getcat=getcat)
 
 # add brand
 @app.route('/addbrand', methods=['GET','POST'])
