@@ -66,8 +66,8 @@
                 <h5 class="text-center">{{b.name}}</h5>
                 <p class="text-center">Price ${{b.price}}</p>
                 <div class="card-footer">
-                    <a href="#" class="float-left btn btn-sm btn-primary">Details</a>
-                    <a href="#" class="float-right btn btn-sm btn-warning"> Add to card</a>
+                    <a href="{{url_for('single_page', id=b.id)}}" class="float-left btn btn-sm btn-primary">Details</a>
+                    <a href="#" class="float-right btn btn-sm btn-warning"> Add to cart</a>
                 </div>
             </div>
         </div>
@@ -116,8 +116,8 @@
                 <h5 class="text-center">{{get_c.name}}</h5>
                 <p class="text-center">Price ${{get_c.price}}</p>
                 <div class="card-footer">
-                    <a href="#" class="float-left btn btn-sm btn-primary">Details</a>
-                    <a href="#" class="float-right btn btn-sm btn-warning"> Add to card</a>
+                    <a href="{{url_for('single_page', id =get_c.id)}}" class="float-left btn btn-sm btn-primary">Details</a>
+                    <a href="#" class="float-right btn btn-sm btn-warning"> Add to cart</a>
                 </div>
             </div>
         </div>
@@ -167,8 +167,21 @@
                 <h5 class="text-center">{{product.name}}</h5>
                 <p class="text-center">Price ${{product.price}}</p>
                 <div class="card-footer">
-                    <a href="#" class="float-left btn btn-sm btn-primary">Details</a>
-                    <a href="#" class="float-right btn btn-sm btn-warning"> Add to card</a>
+                    <a href="{{url_for('single_page', id=product.id)}}" class="float-left btn btn-sm btn-primary">Details</a>
+                    <form action="{{url_for('AddCart')}}" method="post">
+                <input type="hidden" name="product_id" value="{{product.id}}">
+                <button type="submit" class="btn btn-sm btn-warning float-right">Add to Cart</button>
+
+                <input type="hidden" name="quantity" value="1" min="1" max="{{product.stock}}">
+                {% set colors = product.colors.split(',') %}
+
+                <select name="colors" id="colors" style="visibility: hidden;">
+                    {% for color in colors %}
+                    {% set col = color.split(':') %}
+                    <option value="{{col[0]}}">{{col[0] | capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </form>
                 </div>
             </div>
         </div>
